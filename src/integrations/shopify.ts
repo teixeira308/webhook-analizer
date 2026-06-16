@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { IntegrationConfig } from "@/types";
+import type { IntegrationConfig } from "../types";
 
 const shopifySchema = z.object({
   id: z.number(),

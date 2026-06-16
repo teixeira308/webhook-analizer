@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { IntegrationConfig } from "@/types";
+import type { IntegrationConfig } from "../types";
 
 const mercadolivreSchema = z.object({
   resource: z.string(),

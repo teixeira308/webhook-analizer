@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { WebhookRequest, RequestFilters, Stats, IntegrationStats } from "@/types";
+import type { WebhookRequest, RequestFilters, Stats, IntegrationStats } from "../types";
 
 const DATA_DIR = path.resolve(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "requests.json");

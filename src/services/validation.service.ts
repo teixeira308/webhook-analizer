@@ -1,7 +1,7 @@
 import type { Request } from "express";
-import type { IntegrationConfig, WebhookRequest } from "@/types";
+import type { IntegrationConfig, WebhookRequest } from "../types";
 import { v4 as uuid } from "uuid";
-import { logger } from "@/utils/logger";
+import { logger } from "../utils/logger";
 
 export interface ValidationResult {
   passed: boolean;

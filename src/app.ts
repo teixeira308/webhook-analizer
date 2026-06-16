@@ -1,11 +1,11 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
-import { timerMiddleware } from "@/middlewares/timer";
-import webhookRoute from "@/routes/webhook.route";
-import requestsRoute from "@/routes/requests.route";
-import statsRoute from "@/routes/stats.route";
-import healthRoute from "@/routes/health.route";
-import { logger } from "@/utils/logger";
+import { timerMiddleware } from "./middlewares/timer";
+import webhookRoute from "./routes/webhook.route";
+import requestsRoute from "./routes/requests.route";
+import statsRoute from "./routes/stats.route";
+import healthRoute from "./routes/health.route";
+import { logger } from "./utils/logger";
 
 export function createApp(): express.Application {
   const app = express();

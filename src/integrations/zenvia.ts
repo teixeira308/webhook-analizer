@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { IntegrationConfig } from "@/types";
+import type { IntegrationConfig } from "../types";
 
 const messageStatusSchema = z.object({
   timestamp: z.string(),

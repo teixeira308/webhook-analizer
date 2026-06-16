@@ -1,5 +1,5 @@
-import type { IntegrationConfig } from "@/types";
-import { IntegrationNotFoundError } from "@/utils/errors";
+import type { IntegrationConfig } from "../types";
+import { IntegrationNotFoundError } from "../utils/errors";
 import { integrations } from "./index";
 
 let registry: Map<string, IntegrationConfig> | null = null;

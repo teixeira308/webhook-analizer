@@ -1,11 +1,11 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
-import { getIntegration, listIntegrations } from "@/integrations/registry";
-import { validateRequest, buildWebhookRecord } from "@/services/validation.service";
-import { storage } from "@/services/storage.service";
-import { getResponseTime } from "@/middlewares/timer";
-import { logger } from "@/utils/logger";
-import { IntegrationNotFoundError } from "@/utils/errors";
+import { getIntegration, listIntegrations } from "../integrations/registry";
+import { validateRequest, buildWebhookRecord } from "../services/validation.service";
+import { storage } from "../services/storage.service";
+import { getResponseTime } from "../middlewares/timer";
+import { logger } from "../utils/logger";
+import { IntegrationNotFoundError } from "../utils/errors";
 
 const router = Router();
 
