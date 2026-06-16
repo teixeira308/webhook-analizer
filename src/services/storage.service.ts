@@ -2,22 +2,30 @@ import fs from "node:fs";
 import path from "node:path";
 import type { WebhookRequest, RequestFilters, Stats, IntegrationStats } from "../types";
 
-const DATA_DIR = path.resolve(process.cwd(), "data");
+const DATA_DIR = path.resolve(
+  process.env.VERCEL ? "/tmp" : process.cwd(),
+  "data"
+);
 const DATA_FILE = path.join(DATA_DIR, "requests.json");
 
-function ensureDataFile(): void {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, "[]", "utf-8");
+function ensureDataFile(): boolean {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    if (!fs.existsSync(DATA_FILE)) {
+      fs.writeFileSync(DATA_FILE, "[]", "utf-8");
+    }
+    return true;
+  } catch {
+    return false;
   }
 }
 
 function readAll(): WebhookRequest[] {
-  ensureDataFile();
-  const raw = fs.readFileSync(DATA_FILE, "utf-8");
+  if (!ensureDataFile()) return [];
   try {
+    const raw = fs.readFileSync(DATA_FILE, "utf-8");
     return JSON.parse(raw) as WebhookRequest[];
   } catch {
     return [];
@@ -25,8 +33,12 @@ function readAll(): WebhookRequest[] {
 }
 
 function writeAll(requests: WebhookRequest[]): void {
-  ensureDataFile();
-  fs.writeFileSync(DATA_FILE, JSON.stringify(requests, null, 2), "utf-8");
+  if (!ensureDataFile()) return;
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(requests, null, 2), "utf-8");
+  } catch {
+    // silent fail — dados em memória perdidos no próximo cold start
+  }
 }
 
 function computeStats(list: WebhookRequest[]): IntegrationStats {
