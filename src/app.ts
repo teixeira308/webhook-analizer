@@ -6,6 +6,8 @@ import requestsRoute from "./routes/requests.route";
 import statsRoute from "./routes/stats.route";
 import healthRoute from "./routes/health.route";
 import documentationRoute from "./routes/documentation.route";
+import documentationIndexRoute from "./routes/documentation-index.route";
+import documentationMercadolivreRoute from "./routes/documentation-mercadolivre.route";
 import { logger } from "./utils/logger";
 
 export function createApp(): express.Application {
@@ -37,6 +39,8 @@ export function createApp(): express.Application {
   app.use(statsRoute);
   app.use(healthRoute);
   app.use(documentationRoute);
+  app.use(documentationIndexRoute);
+  app.use(documentationMercadolivreRoute);
 
   app.use((_req: Request, res: Response) => {
     res.status(404).json({ error: "Rota não encontrada" });

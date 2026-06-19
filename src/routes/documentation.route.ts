@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 
 const router = Router();
 
-router.get("/documentation", (_req: Request, res: Response) => {
+router.get("/documentation/zenvia", (_req: Request, res: Response) => {
   res.send(`<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
