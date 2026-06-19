@@ -5,6 +5,7 @@ import webhookRoute from "./routes/webhook.route";
 import requestsRoute from "./routes/requests.route";
 import statsRoute from "./routes/stats.route";
 import healthRoute from "./routes/health.route";
+import documentationRoute from "./routes/documentation.route";
 import { logger } from "./utils/logger";
 
 export function createApp(): express.Application {
@@ -35,6 +36,7 @@ export function createApp(): express.Application {
   app.use(requestsRoute);
   app.use(statsRoute);
   app.use(healthRoute);
+  app.use(documentationRoute);
 
   app.use((_req: Request, res: Response) => {
     res.status(404).json({ error: "Rota não encontrada" });
