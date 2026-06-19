@@ -38,6 +38,8 @@ router.get("/documentation", (_req: Request, res: Response) => {
   }
   code { font-family: "SF Mono", "Fira Code", monospace; background: #161b22; padding: 1px 4px; border-radius: 4px; font-size: .85em; }
   pre code { background: none; padding: 0; }
+  ol { padding-left: 1.5rem; font-size: .9rem; }
+  ol li { margin-bottom: .8rem; color: #e6edf3; }
   ul { padding-left: 1.25rem; color: #8b949e; font-size: .9rem; }
   li { margin-bottom: .3rem; }
   table { width: 100%; border-collapse: collapse; font-size: .9rem; }
@@ -62,6 +64,38 @@ router.get("/documentation", (_req: Request, res: Response) => {
 <section>
   <h2>Visão Geral</h2>
   <p>Esta API recebe webhooks enviados pela <strong>Zenvia</strong> (plataforma de comunicação CPaaS). Os payloads são validados conforme as regras da integração: header <code>x-api-token</code> obrigatório, método <code>POST</code>, payload de até 512KB e resposta em até 1s.</p>
+</section>
+
+<section>
+  <h2>Como Testar no Sandbox Zenvia</h2>
+  <ol>
+    <li>
+      Acesse o <a href="https://sandbox.zenvia.com" target="_blank" rel="noopener">Zenvia Sandbox</a>
+      e faça login com sua <strong>conta Google</strong>
+    </li>
+    <li>
+      Crie um novo <strong>teste</strong> e selecione o canal desejado
+      (WhatsApp, SMS, Email, etc.)
+    </li>
+    <li>Adicione os <strong>contatos de teste</strong> para o envio</li>
+    <li>
+      Na seção de <strong>Webhook</strong>, configure a URL:
+      <code>https://webhook-analizer.vercel.app/webhook/zenvia</code>
+    </li>
+    <li><strong>Envie uma mensagem</strong> de teste pelo sandbox</li>
+    <li>
+      A Zenvia disparará um webhook para a URL configurada.
+      Consulte a API para conferir o resultado:
+      <pre style="margin-top: .6rem;"># Listar webhooks recebidos da Zenvia
+curl https://webhook-analizer.vercel.app/requests?integration=zenvia
+
+# Ver estatísticas
+curl https://webhook-analizer.vercel.app/stats
+
+# Detalhes de um webhook específico
+curl https://webhook-analizer.vercel.app/requests/&lt;id&gt;</pre>
+    </li>
+  </ol>
 </section>
 
 <section>
@@ -199,7 +233,7 @@ router.get("/documentation", (_req: Request, res: Response) => {
       <tr><td><code>Content-Type</code></td><td><code>application/json</code></td></tr>
     </table>
     <h3>Exemplo</h3>
-    <pre>curl -X POST http://localhost:3000/webhook/zenvia \\
+    <pre>curl -X POST https://webhook-analizer.vercel.app/webhook/zenvia \\
   -H "Content-Type: application/json" \\
   -H "x-api-token: seu-token-aqui" \\
   -d '{
@@ -252,14 +286,14 @@ router.get("/documentation", (_req: Request, res: Response) => {
       <tr><td><code>limit</code></td><td>number</td><td>Máximo de resultados (padrão: 50)</td></tr>
     </table>
     <h3>Exemplo</h3>
-    <pre>curl "http://localhost:3000/requests?integration=zenvia&passed=true&limit=10"</pre>
+    <pre>curl "https://webhook-analizer.vercel.app/requests?integration=zenvia&passed=true&limit=10"</pre>
   </div>
 
   <div class="endpoint">
     <div><span class="method get">GET</span><span class="path">/requests/:id</span></div>
     <div class="desc">Retorna os detalhes de um webhook específico pelo ID.</div>
     <h3>Exemplo</h3>
-    <pre>curl http://localhost:3000/requests/abc123</pre>
+    <pre>curl https://webhook-analizer.vercel.app/requests/abc123</pre>
   </div>
 
   <div class="endpoint">
@@ -271,7 +305,7 @@ router.get("/documentation", (_req: Request, res: Response) => {
       <tr><td><code>x-integration</code></td><td>Filtrar por integração (opcional)</td></tr>
     </table>
     <h3>Exemplo</h3>
-    <pre>curl -H "x-integration: zenvia" http://localhost:3000/stats</pre>
+    <pre>curl -H "x-integration: zenvia" https://webhook-analizer.vercel.app/stats</pre>
   </div>
 
   <div class="endpoint">
@@ -283,14 +317,14 @@ router.get("/documentation", (_req: Request, res: Response) => {
       <tr><td><code>x-integration</code></td><td>Remove apenas registros da integração (opcional)</td></tr>
     </table>
     <h3>Exemplo</h3>
-    <pre>curl -X DELETE http://localhost:3000/stats</pre>
+    <pre>curl -X DELETE https://webhook-analizer.vercel.app/stats</pre>
   </div>
 
   <div class="endpoint">
     <div><span class="method get">GET</span><span class="path">/health</span></div>
     <div class="desc">Health check do serviço.</div>
     <h3>Exemplo</h3>
-    <pre>curl http://localhost:3000/health</pre>
+    <pre>curl https://webhook-analizer.vercel.app/health</pre>
     <h3>Resposta</h3>
     <pre>{
   "status": "ok",
