@@ -125,7 +125,7 @@ const config: IntegrationConfig = {
   name: "zenvia",
   rules: {
     maxResponseTimeMs: 1000,
-    requiredHeaders: ["x-api-token"],
+    requiredHeaders: [],
     expectedMethods: ["POST"],
     maxPayloadSizeKb: 512,
     mustReturnStatus: 200,

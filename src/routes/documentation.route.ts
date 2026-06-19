@@ -63,7 +63,7 @@ router.get("/documentation", (_req: Request, res: Response) => {
 
 <section>
   <h2>Visão Geral</h2>
-  <p>Esta API recebe webhooks enviados pela <strong>Zenvia</strong> (plataforma de comunicação CPaaS). Os payloads são validados conforme as regras da integração: header <code>x-api-token</code> obrigatório, método <code>POST</code>, payload de até 512KB e resposta em até 1s.</p>
+  <p>Esta API recebe webhooks enviados pela <strong>Zenvia</strong> (plataforma de comunicação CPaaS). Os payloads são validados conforme as regras da integração: método <code>POST</code>, payload de até 512KB e resposta em até 1s.</p>
 </section>
 
 <section>
@@ -226,16 +226,14 @@ curl https://webhook-analizer.vercel.app/requests/&lt;id&gt;</pre>
   <div class="endpoint">
     <div><span class="method post">POST</span><span class="path">/webhook/zenvia</span></div>
     <div class="desc">Envia um webhook da Zenvia para validação e armazenamento.</div>
-    <h3>Headers obrigatórios</h3>
+    <h3>Headers</h3>
     <table>
       <tr><th>Header</th><th>Descrição</th></tr>
-      <tr><td><code>x-api-token</code></td><td>Token de autenticação da Zenvia</td></tr>
       <tr><td><code>Content-Type</code></td><td><code>application/json</code></td></tr>
     </table>
     <h3>Exemplo</h3>
     <pre>curl -X POST https://webhook-analizer.vercel.app/webhook/zenvia \\
   -H "Content-Type: application/json" \\
-  -H "x-api-token: seu-token-aqui" \\
   -d '{
     "id": "evt_abc123",
     "timestamp": "2025-06-18T12:00:00.000Z",
@@ -267,7 +265,6 @@ curl https://webhook-analizer.vercel.app/requests/&lt;id&gt;</pre>
   "integration": "zenvia",
   "passed": false,
   "errors": [
-    "Header 'x-api-token' é obrigatório",
     "Body: tipo de evento inválido"
   ],
   "responseTimeMs": 3,
