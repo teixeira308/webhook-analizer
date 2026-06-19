@@ -66,7 +66,11 @@ router.get("/documentation", (_req: Request, res: Response) => {
 
 <section>
   <h2>Webhook — Message Events</h2>
-  <p>A Zenvia envia webhooks para os seguintes tipos de evento:</p>
+  <p>A Zenvia envia webhooks para os seguintes tipos de evento.
+  Documentação oficial:
+  <a href="https://zenvia.github.io/zenvia-openapi-spec/v2/#section/MESSAGE" target="_blank" rel="noopener">MESSAGE</a> •
+  <a href="https://zenvia.github.io/zenvia-openapi-spec/v2/#section/MESSAGE_STATUS" target="_blank" rel="noopener">MESSAGE_STATUS</a>
+  </p>
   <table class="schema-table">
     <tr><th>Tipo</th><th>Descrição</th></tr>
     <tr><td><code>MESSAGE</code></td><td>Notificação de mensagem recebida ou enviada</td></tr>
@@ -75,47 +79,110 @@ router.get("/documentation", (_req: Request, res: Response) => {
 
   <h3>Schema MESSAGE</h3>
   <pre>{
-  "id": "evt_abc123",
-  "timestamp": "2025-06-18T12:00:00.000Z",
+  "id": "string (Event Id)",
+  "timestamp": "string &lt;date-time&gt; (Event Timestamp)",
+  "subscriptionId": "string (Webhook ID)",
   "type": "MESSAGE",
-  "subscriptionId": "sub_xyz",
-  "direction": "IN",
-  "channel": "whatsapp",
+  "channel": "string (Message Channel)",
+  "direction": "IN | OUT",
   "message": {
-    "id": "msg_123",
-    "from": "5511999999999",
-    "to": "5511888888888",
-    "direction": "IN",
-    "channel": "whatsapp",
-    "contents": [{ "type": "text", "text": "Olá!" }],
-    "visitor": { "name": "João", "avatar": "https://..." }
+    "id": "string",
+    "from": "string",
+    "to": "string",
+    "direction": "IN | OUT",
+    "channel": "string",
+    "contents": [
+      { "type": "text", "text": "string", "payload": "string" }
+    ],
+    "timestamp": "string &lt;date-time&gt;",
+    "visitor": {
+      "name": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "userName": "string",
+      "picture": "string"
+    },
+    "referral": {
+      "headline": "string",
+      "body": "string",
+      "source": {
+        "id": "string",
+        "type": "string",
+        "url": "string",
+        "text": "string",
+        "user": "string",
+        "timestamp": "string"
+      },
+      "ctwaId": "string"
+    },
+    "idRef": "string"
   }
 }</pre>
 
   <h3>Schema MESSAGE_STATUS</h3>
   <pre>{
-  "id": "evt_def456",
-  "timestamp": "2025-06-18T12:00:00.000Z",
+  "id": "string (Event Id)",
+  "timestamp": "string &lt;date-time&gt; (Event Timestamp)",
+  "subscriptionId": "string (Webhook ID)",
   "type": "MESSAGE_STATUS",
-  "subscriptionId": "sub_xyz",
-  "channel": "whatsapp",
-  "messageId": "msg_123",
+  "channel": "string (Message Channel)",
+  "messageId": "string (Message ID)",
   "contentIndex": 0,
+  "message": {
+    "id": "string",
+    "externalId": "string",
+    "contentIndex": 0,
+    "direction": "IN | OUT",
+    "from": "string",
+    "to": "string"
+  },
   "messageStatus": {
-    "timestamp": "2025-06-18T12:00:05.000Z",
-    "code": "DELIVERED",
-    "description": "Mensagem entregue",
-    "cause": ""
+    "code": "RECORDED | SENT | DELIVERED | READ | REJECTED | NOT_DELIVERED",
+    "timestamp": "string &lt;date-time&gt;",
+    "channel": "string",
+    "description": "string",
+    "direction": "IN | OUT",
+    "causes": [
+      {
+        "channelErrorCode": "string",
+        "reason": "string",
+        "details": "string"
+      }
+    ],
+    "context": {
+      "button": { "type": "text", "payload": "string" }
+    },
+    "channelData": {
+      "sms": { "carrier": "VIVO_BR" },
+      "rcs": { "realChannel": "sms" },
+      "email": {
+        "clientInfo": {
+          "machineOpen": true,
+          "userAgent": "string",
+          "sourceIp": "string",
+          "url": "string"
+        }
+      }
+    },
+    "details": {
+      "file": {
+        "url": "string",
+        "name": "string",
+        "sizeBytes": 0,
+        "mimeType": "string"
+      }
+    }
   }
 }</pre>
 
-  <h3>Status possíveis</h3>
+  <h3>Status codes (messageStatus.code)</h3>
   <p>
-    <span class="badge">REJECTED</span>
+    <span class="badge">RECORDED</span>
     <span class="badge">SENT</span>
     <span class="badge">DELIVERED</span>
-    <span class="badge">NOT_DELIVERED</span>
     <span class="badge">READ</span>
+    <span class="badge">REJECTED</span>
+    <span class="badge">NOT_DELIVERED</span>
   </p>
 </section>
 
