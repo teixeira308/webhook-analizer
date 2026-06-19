@@ -47,7 +47,6 @@ router.get("/documentation/mercadolivre", (_req: Request, res: Response) => {
   th { color: #f0f6fc; font-weight: 600; }
   footer { text-align: center; color: #484f58; font-size: .85rem; margin-top: 2rem; }
   .badge { display: inline-block; background: #21262d; color: #8b949e; font-size: .75rem; padding: 2px 8px; border-radius: 10px; margin: 2px; border: 1px solid #30363d; }
-  .schema-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: .8rem; }
   a { color: #58a6ff; }
   strong { color: #f0f6fc; }
 </style>
@@ -63,7 +62,7 @@ router.get("/documentation/mercadolivre", (_req: Request, res: Response) => {
 
 <section>
   <h2>Visão Geral</h2>
-  <p>Esta API recebe webhooks (notificações) enviados pelo <strong>Mercado Livre</strong>. As notificações informam em tempo real sobre mudanças nos recursos da plataforma: pedidos, itens, perguntas, pagamentos, envios e muito mais.</p>
+  <p>Esta API recebe webhooks (notificações) enviados pelo <strong>Mercado Livre</strong> quando ocorrem mudanças nos recursos da plataforma — pedidos, itens, perguntas, pagamentos, envios, etc.</p>
   <p>Os payloads são validados conforme as regras da integração: método <code>POST</code>, payload de até 512KB e resposta em até 500ms.</p>
 </section>
 
@@ -79,11 +78,9 @@ router.get("/documentation/mercadolivre", (_req: Request, res: Response) => {
       Na seção de <strong>Notificações</strong>, configure a <strong>Callback URL</strong>:
       <code>https://webhook-analizer.vercel.app/webhook/mercadolivre</code>
     </li>
-    <li>Selecione os <strong>tópicos</strong> desejados (orders_v2, items, questions, payments, etc.)</li>
-    <li>Salve as configurações</li>
+    <li>Selecione os <strong>tópicos</strong> desejados e salve</li>
     <li>
-      O Mercado Livre começará a enviar notificações para a URL configurada.
-      Consulte a API para conferir o resultado:
+      Após configurar, consulte a API para conferir as notificações recebidas:
       <pre style="margin-top: .6rem;"># Listar notificações recebidas do Mercado Livre
 curl https://webhook-analizer.vercel.app/requests?integration=mercadolivre
 
@@ -97,10 +94,10 @@ curl https://webhook-analizer.vercel.app/requests/&lt;id&gt;</pre>
 </section>
 
 <section>
-  <h2>Formato das Notificações</h2>
-  <p>Todas as notificações do Mercado Livre seguem uma estrutura comum, com poucas variações entre tópicos.</p>
+  <h2>Formato da Notificação</h2>
+  <p>O Mercado Livre envia notificações via <strong>HTTP POST</strong> para a Callback URL configurada. O payload segue o formato abaixo:</p>
 
-  <h3>Estrutura Padrão (Tópico Geral)</h3>
+  <h3>Estrutura Padrão</h3>
   <pre>{
   "_id": "f9f08571-...",
   "resource": "/items/MLA686791111",
@@ -112,240 +109,30 @@ curl https://webhook-analizer.vercel.app/requests/&lt;id&gt;</pre>
   "received": "2025-01-21T13:44:32.984Z"
 }</pre>
 
-  <h3>Estrutura com Subtópicos</h3>
-  <p>Alguns tópicos organizam as notificações em subtópicos (filtros), indicados pelo campo <code>actions</code>.</p>
-  <pre>{
-  "id": "aaa123bbbbb",
-  "resource": "/vis_leads/93a14ee6-...",
-  "user_id": 123456789,
-  "topic": "vis_leads",
-  "actions": ["visit_request"],
-  "application_id": 1111111111111111111,
-  "attempts": 1,
-  "sent": "2017-10-09T13:44:33.006Z",
-  "received": "2017-10-09T13:44:32.984Z"
-}</pre>
-</section>
-
-<section>
-  <h2>Tópicos Disponíveis</h2>
-  <table class="schema-table">
-    <tr><th>Tópico</th><th>Descrição</th><th>Exemplo de Resource</th></tr>
-    <tr>
-      <td><code>orders_v2</code></td>
-      <td>Criação e alterações em vendas confirmadas</td>
-      <td><code>/orders/2195160686</code></td>
-    </tr>
-    <tr>
-      <td><code>items</code></td>
-      <td>Mudanças em itens publicados</td>
-      <td><code>/items/MLA686791111</code></td>
-    </tr>
-    <tr>
-      <td><code>questions</code></td>
-      <td>Perguntas e respostas feitas</td>
-      <td><code>/questions/5036111111</code></td>
-    </tr>
-    <tr>
-      <td><code>messages</code></td>
-      <td>Mensagens de pós-venda (criadas/lidas)</td>
-      <td><code>3f6da1e35ac84f70...</code></td>
-    </tr>
-    <tr>
-      <td><code>payments</code></td>
-      <td>Pagamentos criados ou com status alterado</td>
-      <td><code>/collections/3043111111</code></td>
-    </tr>
-    <tr>
-      <td><code>shipments</code></td>
-      <td>Criação e alterações em envios</td>
-      <td><code>/shipments/...</code></td>
-    </tr>
-    <tr>
-      <td><code>invoices</code></td>
-      <td>Notas fiscais geradas pelo Faturador ML</td>
-      <td><code>/users/123/invoices/...</code></td>
-    </tr>
-    <tr>
-      <td><code>price_suggestion</code></td>
-      <td>Sugestões de preços</td>
-      <td><code>suggestions/items/.../details</code></td>
-    </tr>
-    <tr>
-      <td><code>vis_leads</code></td>
-      <td>Leads de imóveis (whatsapp, call, question)</td>
-      <td><code>/vis/leads/14b52fd8-...</code></td>
-    </tr>
-    <tr>
-      <td><code>post_purchase</code></td>
-      <td>Reclamações e ações em reclamações</td>
-      <td><code>/post-purchase/v1/claims/...</code></td>
-    </tr>
-    <tr>
-      <td><code>catalog_item_competition_status</code></td>
-      <td>Mudanças de status em competição de catálogo</td>
-      <td><code>/items/ITEM_ID/price_to_win</code></td>
-    </tr>
-    <tr>
-      <td><code>catalog_suggestions</code></td>
-      <td>Sugestões de produtos para o catálogo (Brand Central)</td>
-      <td><code>/catalog_suggestions/...</code></td>
-    </tr>
-    <tr>
-      <td><code>public_offers</code></td>
-      <td>Criação ou alteração de ofertas em itens</td>
-      <td><code>/seller-promotions/offers/...</code></td>
-    </tr>
-    <tr>
-      <td><code>public_candidates</code></td>
-      <td>Itens candidatos a promoções</td>
-      <td><code>/seller-promotions/candidates/...</code></td>
-    </tr>
-    <tr>
-      <td><code>fbm_stock_operations</code></td>
-      <td>Operações de estoque FBM</td>
-      <td><code>/stock/fulfillment/operations/...</code></td>
-    </tr>
-    <tr>
-      <td><code>flex-handshakes</code></td>
-      <td>Transferências de pacotes entre transportadoras</td>
-      <td><code>/flex/sites/MLA/shipments/.../assignment/v1</code></td>
-    </tr>
-    <tr>
-      <td><code>leads-credits</code></td>
-      <td>Créditos aprovados ou rejeitados (veículos e imóveis)</td>
-      <td><code>/vis/loan/66e93589-...</code></td>
-    </tr>
-    <tr>
-      <td><code>stock-location</code></td>
-      <td>Modificações de estoque em user_products</td>
-      <td><code>/user-products/.../stock</code></td>
-    </tr>
+  <h3>Campos</h3>
+  <table>
+    <tr><th>Campo</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>resource</code></td><td>string</td><td>Caminho do recurso que sofreu alteração</td></tr>
+    <tr><td><code>user_id</code></td><td>number</td><td>ID do usuário dono do recurso</td></tr>
+    <tr><td><code>topic</code></td><td>string</td><td>Tópico da notificação (items, orders_v2, payments, etc)</td></tr>
+    <tr><td><code>application_id</code></td><td>number</td><td>ID do aplicativo configurado</td></tr>
+    <tr><td><code>attempts</code></td><td>number</td><td>Número da tentativa de entrega</td></tr>
+    <tr><td><code>sent</code></td><td>string</td><td>Timestamp do envio (UTC)</td></tr>
+    <tr><td><code>received</code></td><td>string</td><td>Timestamp do recebimento (UTC)</td></tr>
+    <tr><td><code>actions</code></td><td>string[]</td><td>Filtros/subtópicos (opcional, ex: ["created"])</td></tr>
   </table>
-</section>
 
-<section>
-  <h2>Exemplos de Notificações por Tópico</h2>
-
-  <h3>orders_v2</h3>
-  <pre>{
-  "resource": "/orders/2195160686",
-  "user_id": 468424240,
-  "topic": "orders_v2",
-  "application_id": 5503910054141466,
-  "attempts": 1,
-  "sent": "2019-10-30T16:19:20.129Z",
-  "received": "2019-10-30T16:19:20.106Z"
-}</pre>
+  <h3>Como consultar o recurso</h3>
+  <p>Com o <code>resource</code> recebido, faça uma requisição GET para a API do Mercado Livre:</p>
   <pre>curl -X GET -H 'Authorization: Bearer $ACCESS_TOKEN' \\
-  https://api.mercadolibre.com/orders/$ORDER_ID</pre>
+  https://api.mercadolibre.com$RESOURCE</pre>
 
-  <h3>items</h3>
-  <pre>{
-  "resource": "/items/MLA686791111",
-  "user_id": 123456789,
-  "topic": "items",
-  "application_id": 2069392825111111,
-  "attempts": 1,
-  "sent": "2017-10-09T13:44:33.006Z",
-  "received": "2017-10-09T13:44:32.984Z"
-}</pre>
-  <pre>curl -X GET -H 'Authorization: Bearer $ACCESS_TOKEN' \\
-  https://api.mercadolibre.com/items/$ITEM_ID</pre>
-
-  <h3>questions</h3>
-  <pre>{
-  "resource": "/questions/5036111111",
-  "user_id": 123456789,
-  "topic": "questions",
-  "application_id": 2069392825111111,
-  "attempts": 1,
-  "sent": "2017-10-09T13:51:05.464Z",
-  "received": "2017-10-09T13:51:05.438Z"
-}</pre>
-  <pre>curl -X GET -H 'Authorization: Bearer $ACCESS_TOKEN' \\
-  https://api.mercadolibre.com/questions/$QUESTION_ID</pre>
-
-  <h3>messages</h3>
-  <pre>{
-  "id": "5e2827f2-99b7-474e-b68b-6a86e934cc7e",
-  "resource": "3f6da1e35ac84f70a24af7360d24c7bc",
-  "user_id": 123456789,
-  "topic": "messages",
-  "actions": ["created"],
-  "application_id": 89745685555,
-  "attempts": 1,
-  "sent": "2017-10-09T13:44:33.006Z",
-  "received": "2017-10-09T13:44:32.984Z"
-}</pre>
-  <pre>curl -X GET -H 'Authorization: Bearer $ACCESS_TOKEN' \\
-  https://api.mercadolibre.com/messages/$RESOURCE</pre>
-
-  <h3>payments</h3>
-  <pre>{
-  "resource": "/collections/3043111111",
-  "user_id": 123456789,
-  "topic": "payments",
-  "application_id": 2069392825111111,
-  "attempts": 1,
-  "sent": "2017-10-09T13:58:22.081Z",
-  "received": "2017-10-09T13:58:22.061Z"
-}</pre>
-  <pre>curl -X GET -H 'Authorization: Bearer $ACCESS_TOKEN' \\
-  https://api.mercadolibre.com/collections/$PAYMENT_ID</pre>
-
-  <h3>shipments</h3>
-  <pre>{
-  "resource": "/stock/fulfillment/operations/9876",
-  "user_id": 1234,
-  "topic": "fbm_stock_operations",
-  "application_id": 12341234,
-  "attempts": 1,
-  "sent": "2017-10-09T13:58:23.347Z",
-  "received": "2017-10-09T13:58:23.329Z"
-}</pre>
-  <pre>curl -X GET -H 'Authorization: Bearer $ACCESS_TOKEN' \\
-  https://api.mercadolibre.com/$RESOURCE</pre>
-
-  <h3>post_purchase (claims)</h3>
-  <pre>{
-  "id": "5e2827f2-99b7-474e-b68b-6a86e934cc7e",
-  "resource": "/post-purchase/v1/claims/5108684499",
-  "user_id": 123456789,
-  "topic": "post_purchase",
-  "actions": ["claims"],
-  "application_id": 89745685555,
-  "attempts": 1,
-  "sent": "2017-10-09T13:44:33.006Z",
-  "received": "2017-10-09T13:44:32.984Z"
-}</pre>
-  <pre>curl -X GET -H 'Authorization: Bearer $ACCESS_TOKEN' \\
-  https://api.mercadolibre.com/$RESOURCE</pre>
-</section>
-
-<section>
-  <h2>Regras Importantes</h2>
+  <h3>Regras importantes</h3>
   <ul>
-    <li><strong>Tempo de resposta:</strong> Responda com HTTP 200 em até <strong>500ms</strong>. Caso contrário, o Mercado Livre fará novas tentativas.</li>
-    <li><strong>Retry:</strong> As notificações serão reenviadas por até <strong>1 hora</strong> (8 tentativas). Após esse período, são descartadas.</li>
-    <li><strong>Filas:</strong> Recomenda-se usar filas — confirme o recebimento (HTTP 200) imediatamente e consulte a API depois.</li>
-    <li><strong>Histórico:</strong> Use a API <code>missed_feeds</code> para recuperar notificações perdidas (até 2 dias).</li>
+    <li>Responda com <strong>HTTP 200</strong> em até <strong>500ms</strong></li>
+    <li>Reenvios acontecem por até <strong>1 hora</strong> (8 tentativas)</li>
+    <li>O campo <code>resource</code> de notificações <code>post_purchase</code> inclui o prefixo <code>/post-purchase</code></li>
   </ul>
-
-  <h3>IPs dos Servidores</h3>
-  <p>Se você usa filtros de IP, adicione os seguintes endereços:</p>
-  <pre>54.88.218.97
-18.215.140.160
-18.213.114.129
-18.206.34.84
-35.236.253.169
-35.245.91.34
-35.245.20.104
-35.186.182.146</pre>
-
-  <h3>Consultar Notificações Perdidas</h3>
-  <pre>curl -X GET -H 'Authorization: Bearer $ACCESS_TOKEN' \\
-  "https://api.mercadolibre.com/missed_feeds?app_id=$APP_ID"</pre>
 </section>
 
 <section>
